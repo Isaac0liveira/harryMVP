@@ -29,6 +29,7 @@ public class PersonagensActivity extends AppCompatActivity implements contratoPe
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personagens);
+        getSupportActionBar().setSubtitle("Personagens");
         init();
     }
 

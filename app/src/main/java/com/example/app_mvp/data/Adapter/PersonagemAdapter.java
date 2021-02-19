@@ -1,27 +1,25 @@
 package com.example.app_mvp.data.Adapter;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app_mvp.R;
-import com.example.app_mvp.data.Api.DownloadImage;
 import com.example.app_mvp.data.Mapper.Personagem;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class PersonagemAdapter extends RecyclerView.Adapter<LinePersonagem> {
 
     List<Personagem> personagens;
 
-    public PersonagemAdapter(List<Personagem> personagens){
+    public PersonagemAdapter(List<Personagem> personagens) {
         this.personagens = personagens;
     }
 
@@ -39,12 +37,27 @@ public class PersonagemAdapter extends RecyclerView.Adapter<LinePersonagem> {
         holder.especiePersonagem1.setText(personagem1.getSpecies());
         holder.casaPersonagem1.setText(personagem1.getHouse());
         holder.generoPersonagem1.setText(personagem1.getGender());
-        if(personagem1.getDateOfBirth().isEmpty()){
+        if (personagem1.getDateOfBirth().isEmpty()) {
             holder.dataPersonagem1.setText("Desconhecida");
-        }else {
-            holder.dataPersonagem1.setText(personagem1.getDateOfBirth());
+        } else {
+            String data = personagem1.getDateOfBirth().replaceAll("-", "/");
+            String[] s = data.split("/");
+            String novaData = s[0]+"/"+s[1]+"/"+s[2];
+            holder.dataPersonagem1.setText(novaData);
         }
-        new DownloadImage.DownloadImageTask(holder.imagemPersonagem1, holder.passView).execute(personagem1.getImage());
+        if (((BitmapDrawable) holder.imagemPersonagem1.getDrawable()) == null) {
+            Picasso.get().load(personagem1.getImage()).resize(100, 140).into(holder.imagemPersonagem1);
+            holder.imagemPersonagem1.setTag(holder);
+        }
+        if(personagem1.getHouse().equals("Sonserina")){
+            holder.constraintCard.setBackgroundResource(R.drawable.shape_sonserina);
+        }else if(personagem1.getHouse().equals("Grifinória")){
+            holder.constraintCard.setBackgroundResource(R.drawable.shape_grifinoria);
+        }else if(personagem1.getHouse().equals("Corvinal")){
+            holder.constraintCard.setBackgroundResource(R.drawable.shape_corvinal);
+        }else{
+            holder.constraintCard.setBackgroundResource(R.drawable.shape_random);
+        }
     }
 
     @Override
@@ -52,12 +65,8 @@ public class PersonagemAdapter extends RecyclerView.Adapter<LinePersonagem> {
         return personagens.size();
     }
 
-    public void updateList(Personagem personagem) {
-        insertItem(personagem);
-    }
-
-    private void insertItem(Personagem personagem) {
-        personagens.add(personagem);
-        notifyItemInserted(getItemCount());
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }
